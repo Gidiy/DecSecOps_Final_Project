@@ -1,0 +1,107 @@
+:
+
+🚀 חלק 1 — הגדרת ההרשאות ב־GitHub
+✅ שלב 1: הוספת המתכנתים כ־Collaborators
+
+כנסי לריפוזיטורי ב־GitHub
+
+לכי ל־Settings
+
+בחרי Collaborators & teams
+
+לחצי Add people
+
+הכניסי את ה־GitHub username שלהם
+
+תני להם הרשאה: Write
+
+זה מאפשר להם לדחוף branches חדשים, אבל לא מאפשר להם למזג ל-main בלי PR.
+
+🚧 חלק 2 — הגדרת הגנות על ה־main (כדי שלא יוכלו למזג בלי אישורך)
+
+ב־GitHub → Settings
+
+Branch protection rules
+
+לחצי Add rule
+
+תגדירי על branch: main או master
+
+סמני:
+
+✔ Require pull request before merging
+✔ Require approvals (שימי 1 לפחות — את תהיי המאשרת)
+✔ Do not allow bypassing the above settings
+✔ Require status checks before merging (אם תרצי בהמשך CI/CD)
+
+לסיום → Save.
+
+עכשיו:
+
+הם לא יכולים לדחוף קוד ישירות ל־master
+
+הם חייבים לפתוח PR
+
+רק את יכולה לאשר
+
+💻 חלק 3 — איך המתכנתים עובדים על המחשב שלהם
+
+כל אחד יקלונן את הפרויקט:
+
+git clone git@github.com:Gidiy/DecSecOps_Final_Project.git
+
+
+(חובה להשתמש ב־SSH כדי למנוע בעיות הרשאות)
+
+🌿 חלק 4 — כל מפתח עובד ב־Branch משל עצמו
+
+כשמתכנת רוצה לפתח פיצ'ר חדש:
+
+git checkout -b feature-login
+
+
+או:
+
+git checkout -b fix-ui-bug
+
+
+זה יוצר branch חדש.
+
+אחרי שהוא עובד:
+
+git add .
+git commit -m "added login endpoint"
+git push origin feature-login
+
+🔁 חלק 5 — פתיחת Pull Request
+
+ברגע שהם דוחפים branch חדש:
+
+GitHub יראה כפתור:
+
+“Compare & Pull Request”
+
+הם לוחצים, ממלאים תיאור → Submit.
+
+👑 חלק 6 — את מאשרת את ה־PR
+
+בריפוזיטורי:
+
+לכי ל־Pull Requests
+
+לחצי על PR שנפתח
+
+בדיקת שינויים
+
+אם הכל טוב → Merge Pull Request
+
+מחיקה של ה־branch (לא חובה, אבל מומלץ)
+
+🔄 חלק 7 — עדכון ה־main אצל כולם
+
+אחרי שה־PR אושר:
+
+כל אחד צריך לעדכן את הקופי שלו:
+
+git checkout master
+git pull origin master
