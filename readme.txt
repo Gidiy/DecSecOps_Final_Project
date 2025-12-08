@@ -69,4 +69,10 @@ POST /api/rewards/suggest - הצעת תגמולים חדשים
 ssh-keygen -t ed25519 -C "hi@gmail.com"
 cat ~/.ssh/id_ed25519.pub
 הדבקת ההדפסה הכתובת - https://github.com/settings/ssh/new
+התחלת  הגיט במחשב - פעם אחת
 git init
+התחברות מרחוק
+git remote add origin git@github.com:Gidiy/DecSecOps_Final_Project.git
+git add .
+git commit -m "Initial commit"
+git push -u origin master
