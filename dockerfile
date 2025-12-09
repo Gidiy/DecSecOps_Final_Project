@@ -3,9 +3,11 @@ FROM python:3.12.10-alpine
 WORKDIR /app
 #inside the container, set the working directory to /app
 
-COPY . .
+COPY requirements.txt .
 
 RUN pip install -r requirements.txt
+
+COPY . .
 
 #RUN export NAME=hothaifa 
 #specific shell session
@@ -21,3 +23,4 @@ CMD [ "python","main.py" ]
 
 #command to build the docker image
 #docker build -t app_test .
+#docker run --name app_test -p 5001:5001 app_test
