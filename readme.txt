@@ -1,78 +1,47 @@
-יצירת סביבה וירטואלית
-git clone https://github.com/Gidiy/DevSecOps-Project6.git - העתקת הפרוייקט למחשב
-cd DevSecOps-Project6-מעבר לתיקייה במחשב
-python -m venv .venv-יצירת סביבה וירטואלית
-.\.venv\Scripts\Activate.ps1-הפעלת הסביבה הוירטואלית
-python -m pip install --upgrade pip-הכנת מנהל ההרחבות להורדה
-python -m pip install -r requirements.txt- הורדת כל ההרחבות מתוך הקובץ
-python main.py - הרצת הפרוייקט
-ctrl + c - עצירת הפרוייקט
-deactivate - יציאה מהסביבה הוירטואלית
+docker network create do-net       
 
-קובץ .env חשוף כדי לאפשר הפעלה זמנית
+docker build -t backend_image ./DevSecOps-Project6-main
 
-קונספט
-הפכו משימות משרדיות משעממות למשחקים מרגשים! צרו תחרויות לכל דבר - איכות קוד, חיסכון באנרגיה, כושר, למידה, אתגרי צוות. השלם עם לוחות הישגים, הישגים ופרסים!
+docker run -d --name backend_con --network do-net backend_image
 
-חלוקת צוותים
-תלמיד 1: מנוע משחק ומערכת הישגים
-תלמיד 2: ניהול תחרויות ותכונות חברתיות
-תלמיד 3: לוחות הישגים ומערכת תגמולים
+docker build -t frontend_image ./Front_dev
 
-מנוע ליצירת משחקים
+docker run -d --name frontend_con --network do-net -p 8080:80 frontend_image
 
-POST /api/games/competitions/create - יצירת תחרות חדשה 
-GET /api/games/active - צפייה בתחרויות פעילות 
-POST /api/games/join - הצטרפות לתחרות 
-PUT /api/games/progress/update - עדכון התקדמות התחרות 
-GET /api/games/rules - קבלת כללי תחרות 
-POST /api/games/custom/create - יצירת כללי משחק מותאמים אישית מערכת הישגים 
+בדיקה
+docker ps
+docker network inspect do-net
+docker exec -it frontend_con sh
+ping backend_con
 
-מערכת הישגים
-GET /api/achievements/available - צפייה בהישגים זמינים 
-POST /api/achievements/unlock - פתיחת הישגים 
-GET /api/achievements/my-progress - התקדמות אישית בהישגים 
-POST /api/achievements/create-custom - יצירת הישגים מותאמים אישית 
-קטגוריות משחק
-POST /api/competitions/code-quality - תחרויות איכות קוד 
-POST /api/competitions/learning - אתגרי למידה 
-POST /api/competitions/fitness - אתגרי כושר במשרד 
-POST /api/competitions/sustainability - תחרויות משרד ירוק 
-POST /api/competitions/creativity - אתגרים יצירתיים 
-POST /api/competitions/team-building - פעילויות בניית צוות לוחות הישגים ודירוגים 
+הקמה מהירה לאחר שינוי
 
-לוח הישגים ודירוגים
-GET /api/leaderboards/global - לוחות הישגים משרדיים גלובליים 
-GET /api/leaderboards/team - לוחות הישגים ספציפיים לצוות 
-GET /api/leaderboards/monthly - דירוגים חודשיים 
-POST /api/leaderboards/challenge - אתגר דירוג של מישהו 
-GET /api/leaderboards/hall-of-fame - היכל התהילה 
-POST /api/leaderboards/predictions - ניבוי זוכים תכונות חברתיות 
-פיצ'רים חברתיים
-POST /api/social/teams/create - יצירת צוותי תחרות 
-GET /api/social/friends - צפייה בחברים/עמיתים מהמשרד 
-POST /api/social/challenges/send - שליחת אתגרים אישיים 
-GET /api/social/activity-feed - פיד של פעילות חברתית 
-POST /api/social/celebrations - חגיגת הישגים 
-GET /api/social/rivalries - יריבויות משרדיות מהנות מערכת תגמולים 
-מערכת תגמולים
-GET /api/rewards/available - תגמולים זמינים 
-POST /api/rewards/redeem - מימוש נקודות עבור תגמולים 
-GET /api/rewards/my-points - בדיקת נקודות אישיות 
-POST /api/rewards/donate-points - תרומת נקודות לצדקה 
-GET /api/rewards/store - אחסון תגמולים במשרד 
-POST /api/rewards/suggest - הצעת תגמולים חדשים
+הקמת קונטיינר לפוסטגרס
+docker run -d --name pg_db --network app-net \
+  -e POSTGRES_USER=app_admin \
+  -e POSTGRES_PASSWORD=SuperSecret123 \
+  -e POSTGRES_DB=gamification \
+  -p 5432:5432 \
+  -v pgdata:/var/lib/postgresql/data \
+  postgres:16
 
-כדי להקל על שליחת הבקשות יצרנו ממשק משתמש נוח שבוחרים את המצב הרצוי ומקבלים את תשובת הrequest
 
-יצירת מפתח SSH לריפו
-ssh-keygen -t ed25519 -C "hi@gmail.com"
-cat ~/.ssh/id_ed25519.pub
-הדבקת ההדפסה הכתובת - https://github.com/settings/ssh/new
-התחלת  הגיט במחשב - פעם אחת
-git init
-התחברות מרחוק
-git remote add origin git@github.com:Gidiy/DecSecOps_Final_Project.git
-git add .
-git commit -m "Initial commit"
-git push -u origin master
+docker stop backend_con
+docker rm backend_con
+docker rmi backend_image
+
+docker stop frontend_con
+docker rm frontend_con
+docker rmi frontend_image
+
+#בונה באקאנד
+docker build -t backend_image ./backend
+#בונה תמונה של פרונטאנד
+docker build -t frontend_image ./frontend
+#מריץ קונטיינר של באקאנד
+docker run -d --name backend_con --network do-net -e DATABASE_URL=postgresql://app_admin:SuperSecret123@pg_db:5432/gamification -p 5000:5000 backend_image
+
+#מריץ קונטיינר של פרונטאנד
+docker run -d --name frontend_con --network do-net -p 8080:80 frontend_image
+#מריץ קונטיינר של פוסטגרס
+docker run -d --name database_con --network do-net -e POSTGRES_USER=app_admin -e POSTGRES_PASSWORD=SuperSecret123 -e POSTGRES_DB=gamification -p 5432:5432 -v pgdata:/var/lib/postgresql/data postgres:16
