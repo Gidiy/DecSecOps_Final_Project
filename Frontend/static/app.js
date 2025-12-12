@@ -1,247 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Gamification Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root {
-      --matte-blue: #345da7; /* matte/duller blue */
-      --matte-blue-hover: #2a4a86;
-      --bg-page: #0b1220;        /* very dark navy */
-      --bg-surface: #111827;     /* slate-900 */
-      --bg-surface-2: #0f172a;   /* slightly darker */
-      --text-primary: #e5e7eb;   /* gray-200 */
-      --text-secondary: #cbd5e1; /* slate-300 */
-      --border: #374151;         /* gray-700 */
-      --table-head: #1f2937;     /* gray-800 */
-    }
-
-    /* Base dark theme */
-    html, body { background-color: var(--bg-page); color: var(--text-primary); }
-    header { background-color: var(--bg-surface-2) !important; color: var(--text-primary) !important; }
-    aside { background-color: var(--bg-surface) !important; color: var(--text-primary) !important; }
-
-    /* Cards, tables, pre blocks use dark surfaces */
-    .bg-white { background-color: var(--bg-surface) !important; }
-    .bg-gray-100 { background-color: var(--table-head) !important; }
-    .border { border-color: var(--border) !important; }
-    pre { background-color: var(--bg-surface) !important; color: var(--text-secondary); margin: 0 !important; padding: 0.25rem !important; }
-    /* Table hover color to match dark theme */
-    tr:hover { background-color: var(--bg-surface-2) !important; }
-    .hover\:bg-gray-50:hover { background-color: var(--bg-surface-2) !important; }
-
-    /* Inputs */
-    input { background-color: var(--bg-surface-2); color: var(--text-primary); border: 1px solid var(--border); }
-    input::placeholder { color: #94a3b8; }
-    select { background-color: var(--bg-surface-2); color: var(--text-primary); border: 1px solid var(--border); }
-    select option { background-color: var(--bg-surface-2); color: var(--text-primary); }
-
-    /* Body copy contrast fixes */
-    p, .text-gray-700 { color: var(--text-secondary) !important; background-color: transparent !important; }
-
-    /* Buttons: matte blue */
-    button { background-color: var(--matte-blue) !important; color: #ffffff !important; border: none; }
-    button:hover { background-color: var(--matte-blue-hover) !important; }
-  </style>
-  
-</head>
-<body class="bg-gray-100 font-sans">
-
-  <!-- Header -->
-  <header class="bg-blue-600 text-white p-4 flex justify-between items-center shadow">
-    <h1 class="text-xl font-bold">Gamification Platform</h1>
-    <div id="user-status" class="text-sm">Not logged in</div>
-  </header>
-
-  <div class="flex">
-    <!-- Sidebar -->
-    <aside class="w-64 bg-white shadow-lg min-h-screen p-4 space-y-4">
-      <button onclick="showSection('home-section')" class="w-full bg-blue-500 text-white py-2 rounded">🏠 home</button>
-      <button onclick="showSection('login-section')" class="w-full bg-blue-500 text-white py-2 rounded">🔑 Login</button>
-      <button onclick="showSection('register-section')" class="w-full bg-blue-500 text-white py-2 rounded">📝 Register</button>
-      <hr>
-      <button onclick="showSection('games-section')" class="w-full bg-blue-500 text-white py-2 rounded">🎮 games</button>
-      <button onclick="showSection('achievements-section')" class="w-full bg-blue-500 text-white py-2 rounded">🏆 Achievements</button>
-      <button onclick="showSection('competitions-section')" class="w-full bg-blue-500 text-white py-2 rounded">📊 Competitions</button>
-      <button onclick="showSection('rewards-section')" class="w-full bg-blue-500 text-white py-2 rounded">🎁 Rewards</button>
-      <button onclick="showSection('social-section')" class="w-full bg-blue-500 text-white py-2 rounded">👥 Social</button>
-      <button onclick="showSection('leaderboards-section')" class="w-full bg-blue-500 text-white py-2 rounded">👥 Leaderboards</button>
-    </aside>
-
-    <!-- Main content -->
-    <main class="flex-1 p-6">
-
-
-      <section id="home-section" class="mb-6">
-  <h2 class="text-2xl font-bold mb-4">Welcome to the Gamification Platform</h2>
-        <div class="bg-gray-800 border-l-4 border-blue-400 p-4 mb-6">
-          <p class="text-blue-200">
-            <strong>🏠 Home Dashboard:</strong> View the main overview of all players, their competitions, and total points. This is your central hub for monitoring office gamification progress.
-          </p>
-        </div>
-  <p class="text-gray-700 mb-6">
-    Use the sidebar to navigate through different sections. Start by logging in or registering a new account.
-  </p>
-
-  <!-- Players Table (grouped by user) -->
-  <h2 class="text-xl font-semibold mb-3">🎮 Players</h2>
-  <div class="overflow-x-auto mb-8">
-    <table class="table-auto border-collapse border border-gray-300 w-full text-sm bg-white shadow rounded-lg" id="players-table">
-      <thead class="bg-gray-100">
-        <tr>
-          <th class="border px-4 py-2">Player Name</th>
-          <th class="border px-4 py-2">Competitions</th>
-          <th class="border px-4 py-2">Points</th>
-        </tr>
-      </thead>
-      <tbody id="players-tbody">
-        {% for row in players_grouped %}
-        <tr class="hover:bg-gray-50">
-          <td class="border px-4 py-2">{{ row.username }}</td>
-          <td class="border px-4 py-2">{{ ", ".join(row.competitions) }}</td>
-          <td class="border px-4 py-2 text-center">{{ row.total_points }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-</section>
-
-      <!-- Login -->
-      <section id="login-section" class="hidden">
-        <h2 class="text-2xl mb-4">Login</h2>
-        <div class="bg-gray-800 border-l-4 border-green-400 p-4 mb-6">
-          <p class="text-green-200">
-            <strong>🔑 Login:</strong> Sign in to your account to access personalized features, track your progress, and participate in competitions. Your login credentials are used to identify you across all gamification features.
-          </p>
-        </div>
-        <input id="login-username" class="border p-2 w-full mb-2" placeholder="Username">
-        <input id="login-password" type="password" class="border p-2 w-full mb-2" placeholder="Password">
-        <button onclick="loginUser()" class="bg-blue-600 text-white px-4 py-2 rounded">Login</button>
-      </section>
-
-      <!-- Register -->
-      <section id="register-section" class="hidden">
-        <h2 class="text-2xl mb-4">Register</h2>
-        <div class="bg-gray-800 border-l-4 border-purple-400 p-4 mb-6">
-          <p class="text-purple-200">
-            <strong>📝 Register:</strong> Create a new account to join the gamification platform. Choose a unique username and secure password to start earning points, unlocking achievements, and competing with colleagues.
-          </p>
-        </div>
-        <input id="reg-username" class="border p-2 w-full mb-2" placeholder="Username">
-        <input id="reg-password" type="password" class="border p-2 w-full mb-2" placeholder="Password">
-        <button onclick="registerUser()" class="bg-blue-600 text-white px-4 py-2 rounded">Register</button>
-      </section>
-
-      <!-- Games -->
-      <section id="games-section" class="hidden">
-        <h2 class="text-2xl mb-4">Games</h2>
-        <div class="bg-gray-800 border-l-4 border-orange-400 p-4 mb-6">
-          <p class="text-orange-200">
-            <strong>🎮 Games:</strong> Create and manage custom game competitions. Set up tournaments, track participant progress, and define custom game rules. Perfect for organizing office challenges, tournaments, and skill-based competitions.
-          </p>
-        </div>
-        <div class="space-x-2">
-          <button onclick="sendRequest('games_create')" class="bg-blue-600 text-white px-3 py-2 rounded">Create</button>
-          <button onclick="sendRequest('games_active')" class="bg-blue-600 text-white px-3 py-2 rounded">Active</button>
-          <button onclick="sendRequest('games_progress_update')" class="bg-blue-600 text-white px-3 py-2 rounded">Update Progress</button>
-        </div>
-        <div id="games-output" class="bg-white p-1 mt-1 rounded shadow"></div>
-      </section>
-
-      <!-- Achievements -->
-      <section id="achievements-section" class="hidden">
-        <h2 class="text-2xl mb-4">Achievements</h2>
-        <div class="bg-gray-800 border-l-4 border-yellow-400 p-4 mb-6">
-          <p class="text-yellow-200">
-            <strong>🏆 Achievements:</strong> Unlock and manage achievement badges with rarity-based point values. Create custom achievements, track your progress, and earn points based on achievement rarity (Common: 10pts, Rare: 20pts, Epic: 40pts, Legendary: 80pts).
-          </p>
-        </div>
-        <div class="space-x-2">
-          <button onclick="sendRequest('achievements_available')" class="bg-blue-600 text-white px-3 py-2 rounded">Available</button>
-          <button onclick="sendRequest('achievements_create_custom')" class="bg-blue-600 text-white px-3 py-2 rounded">Custom</button>
-        </div>
-        <div id="achievements-output" class="bg-white p-1 mt-1 rounded shadow"></div>
-        <canvas id="achievementsChart" class="mt-4"></canvas>
-      </section>
-
-      <!-- Leaderboards -->
-      <section id="leaderboards-section" class="hidden">
-        <h2 class="text-2xl mb-1">Leaderboards</h2>
-        <div class="bg-gray-800 border-l-4 border-red-400 p-4 mb-6">
-          <p class="text-red-200">
-            <strong>🏆 Leaderboards:</strong> View rankings across different categories - Global (overall office rankings), Team (team-specific rankings), Monthly (monthly performance), and Hall of Fame (all-time top performers). Submit predictions and manage manual point entries.
-          </p>
-        </div>
-        <div class="space-x-2 mb-1">
-          <button onclick="sendRequest('leaderboards_global')" class="bg-blue-600 text-white px-3 py-2 rounded">Global</button>
-          <button onclick="sendRequest('leaderboards_team')" class="bg-blue-600 text-white px-3 py-2 rounded">Team</button>
-          <button onclick="sendRequest('leaderboards_monthly')" class="bg-blue-600 text-white px-3 py-2 rounded">Monthly</button>
-          <button onclick="sendRequest('leaderboards_hall_of_fame')" class="bg-blue-600 text-white px-3 py-2 rounded">Hall of Fame</button>
-          <button onclick="sendRequest('leaderboards_predictions_view')" class="bg-blue-600 text-white px-3 py-2 rounded">Predictions</button>
-          <button onclick="openEditEntry()" class="bg-blue-600 text-white px-3 py-2 rounded">Edit Entry</button>
-        </div>
-        <div id="leaderboards-output" class="bg-white p-1 mt-1 rounded shadow"></div>
-      </section>
-
-      <!-- Competitions -->
-      <section id="competitions-section" class="hidden">
-        <h2 class="text-2xl mb-4">📊 Competitions</h2>
-        <div class="bg-gray-800 border-l-4 border-indigo-400 p-4 mb-6">
-          <p class="text-indigo-200">
-            <strong>📊 Competitions:</strong> Join predefined office competition categories like Code Quality, Learning, Fitness, Sustainability, Creativity, and Team Building. View your joined competitions or browse all available competitions to participate in office-wide challenges.
-          </p>
-        </div>
-        
-        <!-- View Options -->
-        <div class="flex flex-wrap gap-2 mb-4">
-          <button onclick="sendRequest('competitions_my_competitions')" class="bg-green-600 text-white px-3 py-2 rounded">My Competitions</button>
-          <button onclick="sendRequest('competitions_all')" class="bg-purple-600 text-white px-3 py-2 rounded">All Competitions</button>
-          <button onclick="openJoinCompetitionModal()" class="bg-blue-600 text-white px-3 py-2 rounded">Join Competition</button>
-        </div>
-        
-        <div id="competitions-output" class="bg-white p-1 mt-1 rounded shadow"></div>
-      </section>
-
-      <!-- Rewards -->
-      <section id="rewards-section" class="hidden">
-        <h2 class="text-2xl mb-4">Rewards</h2>
-        <div class="bg-gray-800 border-l-4 border-pink-400 p-4 mb-6">
-          <p class="text-pink-200">
-            <strong>🎁 Rewards:</strong> Redeem your earned points for rewards and manage the reward catalog. Add new rewards, check your point balance, and donate points to colleagues. Your points come from achievements and competition progress.
-          </p>
-        </div>
-        <div class="space-x-2">
-          <button onclick="sendRequest('rewards_available')" class="bg-blue-600 text-white px-3 py-2 rounded">Available</button>
-          <button onclick="sendRequest('rewards_add')" class="bg-blue-600 text-white px-3 py-2 rounded">Add Rewards</button>
-          <button onclick="sendRequest('rewards_donate_points')" class="bg-blue-600 text-white px-3 py-2 rounded">Donate Points</button>
-        </div>
-        <div id="rewards-output" class="bg-white p-1 mt-1 rounded shadow"></div>
-      </section>
-
-      <!-- Social -->
-      <section id="social-section" class="hidden">
-        <h2 class="text-2xl mb-4">Social</h2>
-        <div class="bg-gray-800 border-l-4 border-teal-400 p-4 mb-6">
-          <p class="text-teal-200">
-            <strong>👥 Social:</strong> Build teams, send personal challenges to colleagues, and track social activities. Create team competitions, view the activity feed, and engage in friendly office rivalries to boost collaboration and engagement.
-          </p>
-        </div>
-        <div class="space-x-2">
-          <button onclick="sendRequest('social_teams_create')" class="bg-blue-600 text-white px-3 py-2 rounded">Create Teams</button>
-          <button onclick="sendRequest('social_activity_feed')" class="bg-blue-600 text-white px-3 py-2 rounded">Activity Feed</button>
-          <button onclick="sendRequest('social_challenges_send')" class="bg-blue-600 text-white px-3 py-2 rounded">Send Challenge</button>
-          <button onclick="sendRequest('social_rivalries')" class="bg-blue-600 text-white px-3 py-2 rounded">Rivalries</button>
-          <button onclick="sendRequest('social_celebrations')" class="bg-blue-600 text-white px-3 py-2 rounded">Celebrations</button>
-        </div>
-        <div id="social-output" class="bg-white p-1 mt-1 rounded shadow"></div>
-      </section>
-    </main>
-  </div>
-
-<script>
 /*
 =============================================================================
 GAMIFICATION PLATFORM - FRONTEND JAVASCRIPT
@@ -279,6 +35,30 @@ let currentAchievementsType = null;      // Current achievements view (available
 let currentSocialType = null;            // Current social view (activity feed, teams, etc.)
 let currentRewardsType = null;           // Current rewards view (available, add, etc.)
 let currentCompetitionsType = null;      // Current competitions view (my competitions, all, etc.)
+
+
+window.showSection = showSection;
+window.sendRequest = sendRequest;
+window.loginUser = loginUser;
+window.registerUser = registerUser;
+window.confirmRequest = confirmRequest;
+window.openEditEntry = openEditEntry;
+window.addLeaderboardEntry = addLeaderboardEntry;
+window.removeEntry = removeEntry;
+window.joinGame = joinGame;
+window.unlockAchievement = unlockAchievement;
+window.lockAchievement = lockAchievement;
+window.removeAchievement = removeAchievement;
+window.joinCompetition = joinCompetition;
+window.leaveCompetition = leaveCompetition;
+window.removeCompetition = removeCompetition;
+window.handleCompetitionButton = handleCompetitionButton;
+window.removeChallenge = removeChallenge;
+window.removePrediction = removePrediction;
+window.openJoinCompetitionModal = openJoinCompetitionModal;
+window.joinCompetitionType = joinCompetitionType;
+window.closeJoinCompetitionModal = closeJoinCompetitionModal;
+window.closePanel = closePanel;
 
 // =============================================================================
 // SECTION NAVIGATION
@@ -2031,64 +1811,3 @@ async function confirmRequest() {
     closePanel();
   }
 }
-
-</script>
-<!-- Request Editor Panel -->
-<div id="request-panel" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-  <div class="w-11/12 max-w-2xl p-6 border rounded-lg shadow bg-white">
-    <h2 id="request-title" class="text-lg font-bold mb-2">Request Editor</h2>
-
-    <div id="request-fields" class="space-y-2"></div>
-
-    <div class="flex justify-end gap-2 mt-3">
-      <button onclick="closePanel()" 
-        class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300">Cancel</button>
-      <button onclick="confirmRequest()" 
-        class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">Send Request</button>
-    </div>
-  </div>
-</div>
-
-<!-- Join Competition Modal -->
-<div id="join-competition-modal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-  <div class="w-11/12 max-w-2xl p-6 border rounded-lg shadow bg-white">
-    <h2 class="text-lg font-bold mb-4">🏆 Join Competition</h2>
-    <p class="text-gray-600 mb-4">Choose a competition to join:</p>
-    
-    <div class="grid grid-cols-2 gap-3 mb-4">
-      <button onclick="joinCompetitionType('code-quality')" class="bg-blue-600 text-white px-4 py-3 rounded hover:bg-blue-700 text-center">
-        <div class="font-semibold">Code Quality</div>
-        <div class="text-sm opacity-90">Improve code readability</div>
-      </button>
-      <button onclick="joinCompetitionType('learning')" class="bg-blue-600 text-white px-4 py-3 rounded hover:bg-blue-700 text-center">
-        <div class="font-semibold">Learning</div>
-        <div class="text-sm opacity-90">Upskill and share knowledge</div>
-      </button>
-      <button onclick="joinCompetitionType('fitness')" class="bg-blue-600 text-white px-4 py-3 rounded hover:bg-blue-700 text-center">
-        <div class="font-semibold">Fitness</div>
-        <div class="text-sm opacity-90">Stay active at work</div>
-      </button>
-      <button onclick="joinCompetitionType('sustainability')" class="bg-blue-600 text-white px-4 py-3 rounded hover:bg-blue-700 text-center">
-        <div class="font-semibold">Sustainability</div>
-        <div class="text-sm opacity-90">Promote eco-friendly practices</div>
-      </button>
-      <button onclick="joinCompetitionType('creativity')" class="bg-blue-600 text-white px-4 py-3 rounded hover:bg-blue-700 text-center">
-        <div class="font-semibold">Creativity</div>
-        <div class="text-sm opacity-90">Express and innovate</div>
-      </button>
-      <button onclick="joinCompetitionType('team-building')" class="bg-blue-600 text-white px-4 py-3 rounded hover:bg-blue-700 text-center">
-        <div class="font-semibold">Team Building</div>
-        <div class="text-sm opacity-90">Strengthen collaboration</div>
-      </button>
-    </div>
-
-    <div class="flex justify-end gap-2 mt-4">
-      <button onclick="closeJoinCompetitionModal()" 
-        class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300">Cancel</button>
-    </div>
-  </div>
-</div>
-
-
-</body>
-</html>

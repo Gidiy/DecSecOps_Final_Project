@@ -229,17 +229,17 @@ def homepage():
     # All games with rules_json
     games = Game.query.all()
 
-    return render_template(
-        "homepage.html", 
-        players_grouped=players_grouped,
-        competitions=competitions,
-        games=games
-    )
+    return jsonify({
+            "players_grouped": players_grouped,
+            "competitions": [c.title for c in competitions],
+            "games": [g.title for g in games]
+        })
 
 
 @app.route("/api/players_grouped")
 def api_players_grouped():
     # Get all users who have participated in competitions (from both routes)
+    
     from collections import defaultdict
     
     # Get all users from both Participation (games route) and UserCompetition (competitions route)
@@ -344,4 +344,4 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     # Disable reloader so only one process listens and doesn't respawn
-    app.run(host='0.0.0.0', port=5001, debug=False, use_reloader=False)
+    app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
